@@ -20,6 +20,7 @@ npm run composer -- lint
 Composer をホストで使用する場合は `composer install` / `composer lint` でも実行できます。
 開発サイトは通常 http://localhost:8888（admin / password）です。
 `npm run env:stop` で停止、`npm run env:status` で状態確認、`npm run env:cli -- plugin list` で WP-CLI を実行します。
+ポートが使用中の場合は `npm run env:start -- --auto-port` で空きポートを選び、起動ログの URL を使用します。
 個人用の設定は Git 管理外の `.wp-env.override.json` に記述してください。
 
 ## 多言語化
