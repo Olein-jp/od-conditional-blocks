@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "od-conditional/if",
+	"version": "0.1.0",
+	"title": "IF",
+	"category": "design",
+	"icon": "randomize",
+	"textdomain": "od-conditional-blocks",
+	"editorScript": "file:./index.js",
+	"supports": {
+		"html": false,
+		"inserter": false,
+		"multiple": true,
+		"reusable": false,
+		"lock": false
+	},
+	"parent": [ "od-conditional/conditional" ],
+	"attributes": {
+		"lock": {
+			"type": "object",
+			"default": {
+				"move": true,
+				"remove": true
+			}
+		}
+	}
+}

@@ -1,6 +1,6 @@
 {
   "name": "od-conditional-blocks",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "engines": {
     "node": ">=24.18.0",
@@ -13,10 +13,30 @@
     "env:logs": "wp-env logs",
     "env:cli": "wp-env run cli wp",
     "composer": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks composer",
-    "i18n:pot": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks wp i18n make-pot . languages/od-conditional-blocks.pot --domain=od-conditional-blocks --exclude=vendor,node_modules,dist",
-    "i18n:mo": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks wp i18n make-mo languages"
+    "i18n:pot": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks wp i18n make-pot . languages/od-conditional-blocks.pot --domain=od-conditional-blocks --exclude=vendor,node_modules,dist,tests",
+    "i18n:mo": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks wp i18n make-mo languages",
+    "build": "wp-scripts build --blocks-manifest",
+    "start": "wp-scripts start --blocks-manifest",
+    "lint:js": "wp-scripts lint-js src tests/js",
+    "format": "wp-scripts format src tests/js tests/e2e playwright.config.js vitest.config.mjs",
+    "test:unit": "wp-scripts test-unit-js",
+    "test:e2e": "playwright test",
+    "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/od-conditional-blocks php vendor/bin/phpunit -c phpunit.xml.dist",
+    "i18n:json": "wp-env run cli --env-cwd=wp-content/plugins/od-conditional-blocks wp i18n make-json languages --no-purge"
   },
   "devDependencies": {
-    "@wordpress/env": "^12.1.0"
+    "@playwright/test": "^1.65.1",
+    "@wordpress/block-editor": "^20.0.0",
+    "@wordpress/blocks": "^17.1.0",
+    "@wordpress/components": "^44.0.0",
+    "@wordpress/core-data": "^9.1.0",
+    "@wordpress/data": "^11.1.0",
+    "@wordpress/e2e-test-utils-playwright": "^3.2.0",
+    "@wordpress/element": "^10.1.0",
+    "@wordpress/env": "^12.1.0",
+    "@wordpress/i18n": "^7.1.0",
+    "@wordpress/scripts": "^37.1.0",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   }
 }

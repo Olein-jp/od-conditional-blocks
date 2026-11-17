@@ -1,62 +1,71 @@
 # OD Conditional Blocks
 
-条件付きブロック機能を開発するための最小構成です。ブロック機能自体はまだ実装していません。
+WordPress の投稿・サイトエディターで使う、サーバー側 IF / ELSE 表示制御プラグイン。開発版 **0.1.0**。
 
-## 開発環境
+- Conditional（条件分岐）直下に IF が1つ、ELSE は任意で1つ。
+- 新規挿入時は IF のみ。ELSE は明示ボタンで追加。
+- ページ種別・特定アーカイブの18条件、AND / OR / 条件ごとの NOT。
+- 非選択側は子の PHP コールバック実行前に短絡。
+- 編集表示は IF／ELSE／両方。表示切り替えは保存属性に影響しない。
+- フロント用の追加 JS/CSS、独自テーブルは不要。
 
-- Docker（起動済み）
-- Node.js 24.18 以上、npm 11.16 以上（`nvm use` で Node.js 24 を選択）
-- PHP 7.4 以上、Composer 2（ホスト実行時のみ）
-- プラグインの最低要件: WordPress 6.8 / PHP 7.4
+**表示制御専用です。機密情報・アクセス認可には使わないでください。プラグイン停止時には保存済みコンテンツが残り、IF と ELSE の両方が表示される可能性があります。**
+
+## 導入・使い方
+
+WordPress 6.8 以上 / PHP 8.1 以上を対象にしています。ビルド・実行時依存を含む ZIP をアップロードして有効化します。GitHub の自動生成ソース ZIP はそのまま導入できません。
+
+[操作手順・カテゴリー専用案内](docs/usage.md)、[技術検証・テスト結果](docs/validation.md)、[内部設計](docs/architecture.md)、[保存スキーマ](docs/condition-schema.md) を参照してください。条件を設定するまでは公開ページに何も出力しません。
+
+## 開発
+
+Node.js 24.18 以上 / npm 11.16 以上、Composer 2、Docker を使用します。
 
 ```sh
 nvm use
 npm ci
+composer install
+npm run build
 npm run env:start
-npm run composer -- install
-npm run composer -- lint
+composer lint
+npm run lint:js
+npm run test:unit
+npm run test:php
 ```
 
-Composer をホストで使用する場合は `composer install` / `composer lint` でも実行できます。
-開発サイトは通常 http://localhost:8888（admin / password）です。
-`npm run env:stop` で停止、`npm run env:status` で状態確認、`npm run env:cli -- plugin list` で WP-CLI を実行します。
-ポートが使用中の場合は `npm run env:start -- --auto-port` で空きポートを選び、起動ログの URL を使用します。
-個人用の設定は Git 管理外の `.wp-env.override.json` に記述してください。
+PHP/Composer をホストに用意できない場合は `npm run composer -- install` 等を使用できます。wp-env の URL は `npm run env:status` で確認してください。ポート衝突時は `npm run env:start -- --auto-port` を使用します。既存環境では localhost:8897 が開発サイトです。
 
-## 多言語化
+### E2E
 
-原文は英語、テキストドメインは `od-conditional-blocks` です。日本語の PO / MO と翻訳用 POT を `languages/` に同梱しています。表示文字列には `__()` / `esc_html__()` などを使い、同じテキストドメインを指定してください。
+ローカル開発 DB 専用の管理者を作ります（実サイトでは実行しないでください）。
+
+```sh
+npm run env:cli -- user create od-conditional-e2e od-conditional-e2e@example.test --role=administrator --user_pass=password
+npm run env:cli -- user meta update od-conditional-e2e locale en_US
+npx playwright install chromium
+WP_BASE_URL=http://localhost:8897 npm run test:e2e
+```
+
+`WP_USERNAME` / `WP_PASSWORD` / `WP_BASE_URL` でテスト対象を上書きできます。テストはローカル投稿などを作成・保存します。サイトエディター用テーマは Twenty Twenty-Five です。
+
+## 翻訳
+
+英語原文と日本語 PO / MO / JSON を同梱しています。翻訳カタログの更新はビルド後に行います。
 
 ```sh
 npm run i18n:pot
-# POT をもとに Poedit 等で言語別 PO を更新
 npm run i18n:mo
+npm run i18n:json
 ```
 
-他言語は `od-conditional-blocks-<locale>.po` / `.mo` を追加すると利用できます。
+## 配布・既存の更新機構
 
-## インストールと更新
-
-GitHub Releases の `od-conditional-blocks.zip` を WordPress にアップロードしてください。GitHub の自動生成ソース ZIP は依存ライブラリを含みません。
-[WP GitHub Plugin Updater](https://github.com/inc2734/wp-github-plugin-updater) を使用し、公開済みの最新 Release を WordPress の更新画面から取得します。自動更新を有効にした場合も同じ配布 ZIP を使用します。
-
-## リリース
-
-プラグインヘッダー、`package.json`、POT のバージョンを更新してコミット・プッシュした後、`0.0.0` のような **v を付けない数値3桁**のタグをプッシュします。
+既存の WP GitHub Plugin Updater を維持しています。GitHub Releases の未公開・接続不可時には開発ログに 404 等が残る場合があります。条件判定自体は外部通信を行いません。
 
 ```sh
-git tag 0.0.0
-git push origin 0.0.0
-```
-
-GitHub Actions が規約チェックとバージョン照合を行い、実行時の `vendor/` と翻訳ファイルを含む ZIP を添付して Release を公開します。開発依存、ローカル設定、node_modules は含めません。依存は lockfile からインストールします。追加のシークレット設定は不要です。
-
-ローカルで同じパッケージを確認する場合:
-
-```sh
+npm run build
 composer package
 unzip -t dist/od-conditional-blocks.zip
 ```
 
-配布ファイルを増やした場合は `scripts/package.sh` のコピー対象も更新してください。
-CI は PHP 7.4 の WPCS と配布 ZIP 作成を検証します。最小構成のため PHPUnit・PHPStan・JavaScript ビルドは追加していません。
+ZIP は本体、includes、build、languages、docs、readme、実行時 vendor のみを含みます。開発依存・node_modules・テストは含みません。既存のタグ起点 Release ワークフローは維持します。タグ・コミット・プッシュ・リリースは手動指示があるまで行いません。

@@ -1,0 +1,46 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "od-conditional/conditional",
+	"version": "0.1.0",
+	"title": "Conditional",
+	"category": "design",
+	"icon": "randomize",
+	"textdomain": "od-conditional-blocks",
+	"editorScript": "file:./index.js",
+	"supports": {
+		"html": false
+	},
+	"description": "Edit IF and ELSE content with server-side page conditions.",
+	"allowedBlocks": [ "od-conditional/if", "od-conditional/else" ],
+	"editorStyle": "file:./index.css",
+	"attributes": {
+		"schemaVersion": {
+			"type": "number",
+			"default": 1
+		},
+		"enabled": {
+			"type": "boolean",
+			"default": true
+		},
+		"label": {
+			"type": "string",
+			"default": ""
+		},
+		"conditionGroup": {
+			"type": "object",
+			"default": {
+				"operator": "AND",
+				"conditions": [
+					{
+						"id": "rule-1",
+						"type": "",
+						"operator": "is",
+						"value": true,
+						"negate": false
+					}
+				]
+			}
+		}
+	}
+}

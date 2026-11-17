@@ -3,17 +3,46 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
-  lint-and-package:
+  checks:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        wordpress: ['WordPress/WordPress#6.8', null]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.1'
           tools: composer:v2
+      - run: npm ci
       - run: composer install --prefer-dist --no-interaction --no-progress
       - run: composer validate --strict
       - run: composer lint
-      - run: php -l od-conditional-blocks.php
+      - run: npm run lint:js
+      - run: npm run test:unit
+      - run: npm run build
+      - name: WordPress バージョンを指定
+        env:
+          WP_CORE: ${{ matrix.wordpress }}
+        run: node -e 'const fs=require("fs");fs.writeFileSync(".wp-env.override.json", JSON.stringify({core:process.env.WP_CORE || null}));'
+      - run: npm run env:start
+      - run: npm run test:php
+      - run: npm run env:cli -- theme activate twentytwentyfive
+      - run: npm run env:cli -- user create od-conditional-e2e od-conditional-e2e@example.test --role=administrator --user_pass=password
+      - run: npm run env:cli -- user meta update od-conditional-e2e locale en_US
+      - run: npm run env:cli -- language core install ja
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          WP_BASE_URL: http://localhost:8888
       - run: bash scripts/package.sh
       - run: unzip -t dist/od-conditional-blocks.zip
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results-${{ strategy.job-index }}
+          path: test-results

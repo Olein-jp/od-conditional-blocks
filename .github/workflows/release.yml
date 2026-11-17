@@ -18,8 +18,14 @@ jobs:
         run: '[[ "$RELEASE_TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]'
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.1'
           tools: composer:v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - run: composer install --prefer-dist --no-interaction --no-progress
       - run: composer validate --strict
       - run: composer lint
@@ -32,4 +38,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" dist/od-conditional-blocks.zip --verify-tag --title "$RELEASE_TAG" --generate-notes
+        run: gh release create "$RELEASE_TAG" dist/od-conditional-blocks.zip --verify-tag --title "$RELEASE_TAG" --notes-file "docs/releases/$RELEASE_TAG.md"

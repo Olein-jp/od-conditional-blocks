@@ -2,6 +2,7 @@
 <ruleset name="OD Conditional Blocks">
   <description>プラグイン本体の WordPress コーディング規約。</description>
   <file>od-conditional-blocks.php</file>
+  <file>includes</file>
   <arg name="extensions" value="php"/>
   <arg value="sp"/>
   <rule ref="WordPress"/>

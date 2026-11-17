@@ -2,10 +2,10 @@
 /**
  * Plugin Name: OD Conditional Blocks
  * Plugin URI: https://github.com/Olein-jp/od-conditional-blocks
- * Description: A foundation for conditional block features.
- * Version: 0.0.0
+ * Description: Server-side IF / ELSE display conditions for nested blocks.
+ * Version: 0.1.0
  * Requires at least: 6.8
- * Requires PHP: 7.4
+ * Requires PHP: 8.1
  * Author: Koji Kuno
  * Author URI: https://olein-design.com
  * License: GPL-2.0-or-later
@@ -68,3 +68,16 @@ function missing_dependencies_notice() {
 		esc_html__( 'OD Conditional Blocks: Dependencies are missing. Install the ZIP from GitHub Releases or run composer install in the plugin directory.', 'od-conditional-blocks' )
 	);
 }
+
+/**
+ * ブロック機能を読み込む。
+ *
+ * @return void
+ */
+function initialize_blocks() {
+	foreach ( array( 'condition-registry', 'condition-validator', 'condition-evaluator', 'render-controller', 'plugin' ) as $component ) {
+		require_once __DIR__ . '/includes/class-' . $component . '.php';
+	}
+	Plugin::register();
+}
+add_action( 'init', __NAMESPACE__ . '\\initialize_blocks' );

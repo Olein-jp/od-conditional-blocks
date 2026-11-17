@@ -3,3 +3,7 @@
 /dist/
 /.wp-env.override.json
 .DS_Store
+/.phpunit.result.cache
+/test-results/
+/playwright-report/
+/artifacts/
