@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="OD Conditional Blocks">
+  <description>プラグイン本体の WordPress コーディング規約。</description>
+  <file>od-conditional-blocks.php</file>
+  <arg name="extensions" value="php"/>
+  <arg value="sp"/>
+  <rule ref="WordPress"/>
+  <config name="text_domain" value="od-conditional-blocks"/>
+  <config name="prefixes" value="Olein"/>
+</ruleset>
