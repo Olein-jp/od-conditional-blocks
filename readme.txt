@@ -4,7 +4,7 @@ Tags: conditional, blocks, site-editor
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,9 @@ Server-side IF / ELSE display conditions for nested blocks.
 条件処理用のフロントエンド JavaScript はありません。
 
 == Changelog ==
+
+= 0.1.2 =
+* インスペクターの「条件を追加」ボタンと区切り線の間に 16px の余白を追加しました。
 
 = 0.1.1 =
 * エディター本文内の名称と ELSE なしの説明を設定サイドバーに集約しました。

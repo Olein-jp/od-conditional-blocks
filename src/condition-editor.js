@@ -262,23 +262,25 @@ export default function ConditionEditor( { group, onChange } ) {
 					</Button>
 				</div>
 			) ) }
-			<Button
-				variant="secondary"
-				disabled={ rules.length >= 20 }
-				onClick={ () =>
-					onChange( {
-						operator: group?.operator || 'AND',
-						conditions: [
-							...rules,
-							makeRule(
-								`rule-${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`
-							),
-						],
-					} )
-				}
-			>
-				{ __( 'Add condition', 'od-conditional-blocks' ) }
-			</Button>
+			<div style={ { paddingBlockStart: '16px' } }>
+				<Button
+					variant="secondary"
+					disabled={ rules.length >= 20 }
+					onClick={ () =>
+						onChange( {
+							operator: group?.operator || 'AND',
+							conditions: [
+								...rules,
+								makeRule(
+									`rule-${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`
+								),
+							],
+						} )
+					}
+				>
+					{ __( 'Add condition', 'od-conditional-blocks' ) }
+				</Button>
+			</div>
 		</>
 	);
 }
