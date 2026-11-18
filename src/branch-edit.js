@@ -7,13 +7,22 @@ export function BranchEdit( { branch } ) {
 	);
 	return (
 		<section { ...props }>
-			<div className="od-branch-label" contentEditable={ false }>
-				{ branch === 'if'
-					? __( 'IF: matches conditions', 'od-conditional-blocks' )
-					: __(
-							'ELSE: does not match conditions',
-							'od-conditional-blocks'
-						) }
+			<div
+				className="od-branch-label"
+				contentEditable={ false }
+				title={
+					branch === 'if'
+						? __(
+								'IF: matches conditions',
+								'od-conditional-blocks'
+							)
+						: __(
+								'ELSE: does not match conditions',
+								'od-conditional-blocks'
+							)
+				}
+			>
+				{ branch.toUpperCase() }
 			</div>
 			{ props.children }
 		</section>

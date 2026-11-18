@@ -158,6 +158,14 @@ export default function Edit( { clientId, attributes, setAttributes } ) {
 							setAttributes( { conditionGroup } )
 						}
 					/>
+					{ ! hasElse && (
+						<p className="components-base-control__help">
+							{ __(
+								'No ELSE branch. A false condition produces no output.',
+								'od-conditional-blocks'
+							) }
+						</p>
+					) }
 					{ attributes.enabled &&
 						( attributes.schemaVersion !== 1 ||
 							! validGroup( attributes.conditionGroup ) ) && (
@@ -208,14 +216,6 @@ export default function Edit( { clientId, attributes, setAttributes } ) {
 				</ToolbarGroup>
 			</BlockControls>
 			<div { ...props }>
-				<div className="od-conditional-label" contentEditable={ false }>
-					{ attributes.label ||
-						__( 'Conditional', 'od-conditional-blocks' ) }{ ' ' }
-					·{ ' ' }
-					{ mode === 'both'
-						? __( 'IF and ELSE', 'od-conditional-blocks' )
-						: mode.toUpperCase() }
-				</div>
 				{ ! validStructure && branches.length > 0 && (
 					<Notice status="error" isDismissible={ false }>
 						{ __(
@@ -223,14 +223,6 @@ export default function Edit( { clientId, attributes, setAttributes } ) {
 							'od-conditional-blocks'
 						) }
 					</Notice>
-				) }
-				{ ! hasElse && (
-					<p>
-						{ __(
-							'No ELSE branch. A false condition produces no output.',
-							'od-conditional-blocks'
-						) }
-					</p>
 				) }
 				{ props.children }
 			</div>

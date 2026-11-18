@@ -1,6 +1,6 @@
 # OD Conditional Blocks
 
-WordPress の投稿・サイトエディターで使う、サーバー側 IF / ELSE 表示制御プラグイン。開発版 **0.1.0**。
+WordPress の投稿・サイトエディターで使う、サーバー側 IF / ELSE 表示制御プラグイン。開発版 **0.1.1**。
 
 - Conditional（条件分岐）直下に IF が1つ、ELSE は任意で1つ。
 - 新規挿入時は IF のみ。ELSE は明示ボタンで追加。

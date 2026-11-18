@@ -105,15 +105,13 @@ test( '投稿: IF-only、ELSE、表示モード、リスト選択、保存再編
 		const branch = wp.data
 			.select( 'core/block-editor' )
 			.getBlocks( clientId )[ 1 ];
-		wp.data
-			.dispatch( 'core/block-editor' )
-			.insertBlocks(
-				wp.blocks.createBlock( 'core/paragraph', {
-					content: 'OD ELSE CONTENT',
-				} ),
-				0,
-				branch.clientId
-			);
+		wp.data.dispatch( 'core/block-editor' ).insertBlocks(
+			wp.blocks.createBlock( 'core/paragraph', {
+				content: 'OD ELSE CONTENT',
+			} ),
+			0,
+			branch.clientId
+		);
 	}, id );
 	await selectParent( page, id );
 	await expect(
@@ -584,7 +582,9 @@ test( '実アーカイブと無効化時の両分岐露出・データ保持', a
 	}
 } );
 
-test( '日本語のブロック名・ツールバー・分岐ラベル', async ( { page } ) => {
+test( '日本語のブロック名・ツールバーと最小限の分岐ラベル', async ( {
+	page,
+} ) => {
 	await login( page );
 	await page.goto( '/wp-admin/post-new.php' );
 	await ready( page );
@@ -600,8 +600,17 @@ test( '日本語のブロック名・ツールバー・分岐ラベル', async (
 		await ready( page );
 		await seed( page );
 		await expect(
-			canvas( page ).getByText( 'IF：条件に一致', { exact: true } )
-		).toBeVisible();
+			canvas( page ).locator( '.od-branch-label' )
+		).toBeHidden();
+		await expect(
+			canvas( page ).locator( '.od-conditional-label' )
+		).toHaveCount( 0 );
+		await expect(
+			canvas( page ).getByText(
+				'ELSE はありません。条件に一致しない場合は何も出力しません。',
+				{ exact: true }
+			)
+		).toHaveCount( 0 );
 		await expect(
 			canvas( page ).locator( '[data-type="od-conditional/conditional"]' )
 		).toHaveAttribute( 'data-title', '条件分岐' );
@@ -611,6 +620,21 @@ test( '日本語のブロック名・ツールバー・分岐ラベル', async (
 		await expect(
 			page.getByRole( 'button', { name: 'ELSE を追加', exact: true } )
 		).toBeVisible();
+		await page
+			.getByRole( 'button', { name: 'ELSE を追加', exact: true } )
+			.click();
+		await expect(
+			canvas( page ).locator( '.od-branch-else > .od-branch-label' )
+		).toBeHidden();
+		await page.getByRole( 'button', { name: '両方', exact: true } ).click();
+		for ( const branch of [ 'if', 'else' ] ) {
+			const label = canvas( page ).locator(
+				`.od-branch-${ branch } > .od-branch-label`
+			);
+			await expect( label ).toBeVisible();
+			await expect( label ).toHaveText( branch.toUpperCase() );
+			await expect( label ).toHaveCSS( 'position', 'absolute' );
+		}
 	} finally {
 		await page.evaluate( async () =>
 			wp.apiFetch( {
