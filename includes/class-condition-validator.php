@@ -78,6 +78,7 @@ final class Condition_Validator {
 		}
 		$taxonomy = array(
 			'request/category_term' => 'category',
+			'request/post_category' => 'category',
 			'request/tag_term'      => 'post_tag',
 		)[ $type ] ?? null;
 		$values   = $rule['value'] ?? null;

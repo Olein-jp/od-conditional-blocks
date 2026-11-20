@@ -31,7 +31,19 @@ final class Condition_Evaluator {
 		$results = array();
 		foreach ( $attrs['conditionGroup']['conditions'] as $rule ) {
 			$method = Condition_Registry::all()[ $rule['type'] ];
-			if ( 'request/taxonomy_term' === $rule['type'] ) {
+			if ( 'request/post_category' === $rule['type'] ) {
+				if ( ! $wp_the_query->is_singular( 'post' ) ) {
+					return null;
+				}
+				$post_id = $wp_the_query->get_queried_object_id();
+				if ( ! $post_id ) {
+					return null;
+				}
+				$result = is_object_in_term( $post_id, 'category', $rule['value'] );
+				if ( is_wp_error( $result ) ) {
+					return null;
+				}
+			} elseif ( 'request/taxonomy_term' === $rule['type'] ) {
 				$result = $wp_the_query->$method( $rule['value']['taxonomy'], $rule['value']['terms'] );
 			} elseif ( 'in' === $rule['operator'] ) {
 				$result = $wp_the_query->$method( $rule['value'] );

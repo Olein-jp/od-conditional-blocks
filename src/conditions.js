@@ -5,6 +5,10 @@ export const conditionOptions = () =>
 		[ 'front_page', __( 'Front page', 'od-conditional-blocks' ) ],
 		[ 'posts_page', __( 'Posts page', 'od-conditional-blocks' ) ],
 		[ 'single_post', __( 'Single post', 'od-conditional-blocks' ) ],
+		[
+			'post_category',
+			__( 'Post belongs to category', 'od-conditional-blocks' ),
+		],
 		[ 'page', __( 'Page', 'od-conditional-blocks' ) ],
 		[ 'singular', __( 'Any singular page', 'od-conditional-blocks' ) ],
 		[
@@ -45,7 +49,8 @@ export const conditionOptions = () =>
 		value: value ? `request/${ value }` : '',
 		label,
 	} ) );
-export const needsValue = ( type ) => /(?:_term|_archive_of)$/.test( type );
+export const needsValue = ( type ) =>
+	type === 'request/post_category' || /(?:_term|_archive_of)$/.test( type );
 export function makeRule( id, type = '' ) {
 	let value = true;
 	if ( needsValue( type ) ) {

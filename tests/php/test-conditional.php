@@ -101,6 +101,55 @@ class OD_Conditional_Test extends WP_UnitTestCase {
   wp_delete_term( $this->category, 'category' );
   $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
  }
+ public function test_post_category_membership_and_branches() {
+  $other = self::factory()->category->create();
+  $post = self::factory()->post->create( array( 'post_category' => array( $this->category ) ) );
+  $this->go_to( get_permalink( $post ) );
+  $rule = $this->rule( 'request/post_category' ); $rule['operator'] = 'in';
+  foreach ( array( array( $this->category ), array( get_term( $this->category )->slug ), array( $other, $this->category ) ) as $values ) {
+   $rule['value'] = $values;
+   $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $this->assertSame( 'if', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+   $rule['negate'] = true;
+   $this->assertFalse( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $this->assertSame( 'else', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+   $rule['negate'] = false;
+  }
+  $rule['value'] = array( $other );
+  $this->assertFalse( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  $rule['negate'] = true;
+  $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  wp_delete_term( $other, 'category' );
+  $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  $this->assertSame( '', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+ }
+ public function test_post_category_uses_main_post_and_direct_terms() {
+  global $wp_query, $post;
+  $child = self::factory()->category->create( array( 'parent' => $this->category ) );
+  $main_post = self::factory()->post->create( array( 'post_category' => array( $child ) ) );
+  $this->go_to( get_permalink( $main_post ) );
+  $rule = $this->rule( 'request/post_category' ); $rule['operator'] = 'in'; $rule['value'] = array( $this->category );
+  $this->assertFalse( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  $main_query = $wp_query; $main_global_post = $post;
+  try {
+   $secondary = self::factory()->post->create();
+   $wp_query = new WP_Query( array( 'p' => $secondary ) ); $post = get_post( $secondary );
+   $rule['value'] = array( $child );
+   $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  } finally { $wp_query = $main_query; $post = $main_global_post; }
+ }
+ public function test_post_category_outside_single_post_is_unknown_even_with_not() {
+  $page = self::factory()->post->create( array( 'post_type' => 'page' ) );
+  foreach ( array( get_category_link( $this->category ), get_permalink( $page ), '/?s=category-test', '/?p=999999999' ) as $url ) {
+   $this->go_to( $url );
+   foreach ( array( false, true ) as $negate ) {
+    $rule = $this->rule( 'request/post_category', $negate ); $rule['operator'] = 'in'; $rule['value'] = array( $this->category );
+    $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+    $this->assertSame( '', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+    $this->assertNull( Engine::evaluate( $this->attrs( array( $this->rule( 'request/front_page', true ), $rule ), 'OR' ) ) );
+   }
+  }
+ }
  public function test_custom_taxonomy_and_post_type() {
   register_taxonomy( 'od_genre', 'post', array( 'public' => true ) );
   $term = self::factory()->term->create( array( 'taxonomy' => 'od_genre' ) );
@@ -132,7 +181,7 @@ class OD_Conditional_Test extends WP_UnitTestCase {
  }
  public function test_every_registered_api_can_be_evaluated() {
   foreach ( Registry::all() as $type => $method ) {
-   if ( in_array( $type, array( 'request/category_term', 'request/tag_term', 'request/taxonomy_term', 'request/post_type_archive_of' ), true ) ) { continue; }
+   if ( in_array( $type, array( 'request/post_category', 'request/category_term', 'request/tag_term', 'request/taxonomy_term', 'request/post_type_archive_of' ), true ) ) { continue; }
    $this->assertIsBool( Engine::evaluate( $this->attrs( array( $this->rule( $type ) ) ) ) );
   }
  }

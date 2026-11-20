@@ -3,7 +3,7 @@
  * Plugin Name: OD Conditional Blocks
  * Plugin URI: https://github.com/Olein-jp/od-conditional-blocks
  * Description: Server-side IF / ELSE display conditions for nested blocks.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Requires at least: 6.8
  * Requires PHP: 8.1
  * Author: Koji Kuno

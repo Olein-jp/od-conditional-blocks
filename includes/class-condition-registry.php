@@ -1,5 +1,5 @@
 <?php
-/** 条件 ID と WordPress クエリー API の対応。
+/** 条件 ID と WordPress 判定 API の対応。
  *
  * @package ODConditionalBlocks
  */
@@ -17,6 +17,7 @@ final class Condition_Registry {
 			'request/front_page'           => 'is_front_page',
 			'request/posts_page'           => 'is_home',
 			'request/single_post'          => 'is_single',
+			'request/post_category'        => 'is_object_in_term',
 			'request/page'                 => 'is_page',
 			'request/singular'             => 'is_singular',
 			'request/category_archive'     => 'is_category',

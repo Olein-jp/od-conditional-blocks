@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { conditionOptions, makeRule, validGroup } from '../../src/conditions';
 describe( '保存条件の UX 検証', () => {
-	test( 'MVP 18 種だけを表示する', () => {
-		expect( conditionOptions() ).toHaveLength( 19 );
+	test( '19 種の条件と未設定を表示する', () => {
+		expect( conditionOptions() ).toHaveLength( 20 );
 	} );
 	test( '未設定は公開不可', () => {
 		expect(
@@ -31,6 +31,29 @@ describe( '保存条件の UX 検証', () => {
 				],
 			} )
 		).toBe( true );
+	} );
+	test( '投稿カテゴリーは対象が必要で NOT に対応する', () => {
+		const rule = makeRule( 'category', 'request/post_category' );
+		expect( rule.operator ).toBe( 'in' );
+		expect( validGroup( { operator: 'AND', conditions: [ rule ] } ) ).toBe(
+			false
+		);
+		for ( const value of [ [ 3 ], [ 'news' ], [ 3, 4 ] ] ) {
+			expect(
+				validGroup( {
+					operator: 'AND',
+					conditions: [ { ...rule, value, negate: true } ],
+				} )
+			).toBe( true );
+		}
+		for ( const value of [ [], true, [ 0 ], [ '' ] ] ) {
+			expect(
+				validGroup( {
+					operator: 'AND',
+					conditions: [ { ...rule, value } ],
+				} )
+			).toBe( false );
+		}
 	} );
 	test( '不正演算子、未知条件、空、重複 ID、上限超過を拒否', () => {
 		const rule = makeRule( 'one', 'request/search' );

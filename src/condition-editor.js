@@ -14,10 +14,13 @@ import { conditionOptions, makeRule, needsValue } from './conditions';
 
 function ValuePicker( { rule, update } ) {
 	const [ search, setSearch ] = useState( '' );
+	const postCategory = rule.type === 'request/post_category';
 	const custom = rule.type === 'request/taxonomy_term';
 	const postType = rule.type === 'request/post_type_archive_of';
 	let taxonomy =
-		rule.type === 'request/category_term' ? 'category' : 'post_tag';
+		rule.type === 'request/category_term' || postCategory
+			? 'category'
+			: 'post_tag';
 	if ( custom ) {
 		taxonomy = rule.value?.taxonomy;
 	}
@@ -125,7 +128,11 @@ function ValuePicker( { rule, update } ) {
 				/>
 			) }
 			<ComboboxControl
-				label={ __( 'Add archive target', 'od-conditional-blocks' ) }
+				label={
+					postCategory
+						? __( 'Add category', 'od-conditional-blocks' )
+						: __( 'Add archive target', 'od-conditional-blocks' )
+				}
 				value={ null }
 				options={ items.filter(
 					( item ) => ! values.map( String ).includes( item.value )
@@ -160,10 +167,15 @@ function ValuePicker( { rule, update } ) {
 			) ) }
 			{ error && (
 				<Notice status="warning" isDismissible={ false }>
-					{ __(
-						'Archive targets could not be loaded. Check your permissions and taxonomy REST support.',
-						'od-conditional-blocks'
-					) }
+					{ postCategory
+						? __(
+								'Categories could not be loaded. Check your permissions and taxonomy REST support.',
+								'od-conditional-blocks'
+							)
+						: __(
+								'Archive targets could not be loaded. Check your permissions and taxonomy REST support.',
+								'od-conditional-blocks'
+							) }
 				</Notice>
 			) }
 			{ values.length > 0 &&
@@ -180,10 +192,15 @@ function ValuePicker( { rule, update } ) {
 				) }
 
 			<p>
-				{ __(
-					'Matches the requested archive, not terms assigned to a post in a loop. Missing or private targets produce no output.',
-					'od-conditional-blocks'
-				) }
+				{ postCategory
+					? __(
+							'Matches any selected category assigned directly to the displayed post. NOT matches posts with none of them. Outside single post pages or with missing targets, neither branch is displayed.',
+							'od-conditional-blocks'
+						)
+					: __(
+							'Matches the requested archive, not terms assigned to a post in a loop. Missing or private targets produce no output.',
+							'od-conditional-blocks'
+						) }
 			</p>
 		</>
 	);

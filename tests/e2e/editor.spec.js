@@ -599,6 +599,28 @@ test( '日本語のブロック名・ツールバーと最小限の分岐ラベ�
 		await page.goto( '/wp-admin/post-new.php' );
 		await ready( page );
 		await seed( page );
+		const conditionType = page.getByRole( 'combobox', {
+			name: '表示しているページの種類',
+			exact: true,
+		} );
+		if ( ! ( await conditionType.count() ) ) {
+			await page
+				.getByRole( 'button', { name: '設定', exact: true } )
+				.click();
+		}
+		await expect(
+			conditionType.getByRole( 'option', {
+				name: '投稿が指定カテゴリーに属する',
+				exact: true,
+			} )
+		).toHaveCount( 1 );
+		await conditionType.selectOption( 'request/post_category' );
+		await expect(
+			page.getByRole( 'combobox', {
+				name: 'カテゴリーを追加',
+				exact: true,
+			} )
+		).toBeVisible();
 		await expect(
 			canvas( page ).locator( '.od-branch-label' )
 		).toBeHidden();
@@ -646,57 +668,116 @@ test( '日本語のブロック名・ツールバーと最小限の分岐ラベ�
 	}
 } );
 
-test( '特定カテゴリーを REST 候補から検索して保存する', async ( { page } ) => {
-	await login( page );
-	await page.goto( '/wp-admin/post-new.php' );
-	await ready( page );
-	const category = await page.evaluate( async () =>
-		wp.apiFetch( {
-			path: '/wp/v2/categories',
-			method: 'POST',
-			data: { name: `OD picker ${ Date.now() }` },
-		} )
-	);
-	try {
-		const id = await seed( page );
-		if (
-			! ( await page
-				.getByRole( 'combobox', { name: 'Page type', exact: true } )
-				.count() )
-		) {
-			await page
-				.getByRole( 'button', { name: 'Settings', exact: true } )
-				.click();
-		}
-		await page
-			.getByRole( 'combobox', { name: 'Page type', exact: true } )
-			.selectOption( 'request/category_term' );
-		const picker = page.getByRole( 'combobox', {
-			name: 'Add archive target',
-			exact: true,
-		} );
-		await picker.fill( category.name );
-		await page
-			.getByRole( 'option', { name: category.name, exact: true } )
-			.click();
-		expect(
-			await page.evaluate(
-				( clientId ) =>
-					wp.data
-						.select( 'core/block-editor' )
-						.getBlockAttributes( clientId ).conditionGroup
-						.conditions[ 0 ].value,
-				id
-			)
-		).toEqual( [ category.id ] );
-	} finally {
-		await page.evaluate(
-			async ( categoryId ) =>
-				wp.apiFetch( {
-					path: `/wp/v2/categories/${ categoryId }?force=true`,
-					method: 'DELETE',
-				} ),
-			category.id
+for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
+	test( `${ type }: カテゴリーを REST 候補から選択して保存・再読込する`, async ( {
+		page,
+	} ) => {
+		await login( page );
+		await page.goto( '/wp-admin/post-new.php' );
+		await ready( page );
+		const category = await page.evaluate( async () =>
+			wp.apiFetch( {
+				path: '/wp/v2/categories',
+				method: 'POST',
+				data: { name: `OD picker ${ Date.now() }` },
+			} )
 		);
-	}
-} );
+		try {
+			const id = await seed( page );
+			if (
+				! ( await page
+					.getByRole( 'combobox', { name: 'Page type', exact: true } )
+					.count() )
+			) {
+				await page
+					.getByRole( 'button', { name: 'Settings', exact: true } )
+					.click();
+			}
+			await page
+				.getByRole( 'combobox', { name: 'Page type', exact: true } )
+				.selectOption( type );
+			const picker = page.getByRole( 'combobox', {
+				name:
+					type === 'request/post_category'
+						? 'Add category'
+						: 'Add archive target',
+				exact: true,
+			} );
+			await Promise.all( [
+				page.waitForResponse( ( response ) => {
+					const url = new URL( response.url() );
+					return (
+						url.pathname.includes( '/wp/v2/categories' ) &&
+						url.searchParams.get( 'search' ) === category.name &&
+						response.ok()
+					);
+				} ),
+				picker.fill( category.name ),
+			] );
+			await expect(
+				page.getByRole( 'option', { name: category.name, exact: true } )
+			).toBeVisible();
+			await picker.press( 'ArrowDown' );
+			await picker.press( 'Enter' );
+			expect(
+				await page.evaluate(
+					( clientId ) =>
+						wp.data
+							.select( 'core/block-editor' )
+							.getBlockAttributes( clientId ).conditionGroup
+							.conditions[ 0 ].value,
+					id
+				)
+			).toEqual( [ category.id ] );
+			await page
+				.getByRole( 'checkbox', {
+					name: 'Invert condition (NOT)',
+					exact: true,
+				} )
+				.check();
+			const savedId = await page.evaluate( async () => {
+				wp.data
+					.dispatch( 'core/editor' )
+					.editPost( { title: 'OD category condition E2E' } );
+				await wp.data.dispatch( 'core/editor' ).savePost();
+				return wp.data.select( 'core/editor' ).getCurrentPostId();
+			} );
+			await page.reload();
+			await ready( page );
+			const block = await page.evaluate( () =>
+				wp.data
+					.select( 'core/block-editor' )
+					.getBlocks()
+					.find(
+						( item ) => item.name === 'od-conditional/conditional'
+					)
+			);
+			expect( block.isValid ).toBe( true );
+			expect(
+				block.attributes.conditionGroup.conditions[ 0 ]
+			).toMatchObject( {
+				type,
+				operator: 'in',
+				value: [ category.id ],
+				negate: true,
+			} );
+			await page.evaluate(
+				async ( postId ) =>
+					wp.apiFetch( {
+						path: `/wp/v2/posts/${ postId }?force=true`,
+						method: 'DELETE',
+					} ),
+				savedId
+			);
+		} finally {
+			await page.evaluate(
+				async ( categoryId ) =>
+					wp.apiFetch( {
+						path: `/wp/v2/categories/${ categoryId }?force=true`,
+						method: 'DELETE',
+					} ),
+				category.id
+			);
+		}
+	} );
+}
