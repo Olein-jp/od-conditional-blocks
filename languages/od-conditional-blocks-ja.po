@@ -2,9 +2,9 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OD Conditional Blocks 0.1.0\n"
+"Project-Id-Version: OD Conditional Blocks 0.1.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-conditional-blocks\n"
-"POT-Creation-Date: 2026-11-20T03:56:17+00:00\n"
+"POT-Creation-Date: 2026-11-20T05:04:40+00:00\n"
 "PO-Revision-Date: 2026-11-17 14:20+0900\n"
 "Last-Translator: Koji Kuno\n"
 "Language-Team: Japanese\n"
@@ -46,252 +46,295 @@ msgid "OD Conditional Blocks: Dependencies are missing. Install the ZIP from Git
 msgstr "OD Conditional Blocks: 依存関係が不足しています。GitHub Releases の ZIP をインストールするか、プラグインディレクトリで composer install を実行してください。"
 
 #: build/conditional/index.js:1
+#: src/target-token-field.js:52
+msgid "Choose existing targets from the suggestions. Remove a token to deselect it."
+msgstr "候補から対象を選択してください。選択を解除するにはトークンを削除します。"
+
+#. translators: 1: post title, 2: post type label, 3: post ID.
+#: build/conditional/index.js:2
+#: src/singular-picker.js:71
+msgid "%1$s — %2$s (%3$d)"
+msgstr "%1$s — %2$s (%3$d)"
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:73
+msgid "(Untitled)"
+msgstr "（タイトルなし）"
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:75
+msgid "Post"
+msgstr "投稿"
+
+#: build/conditional/index.js:2
+#: src/conditions.js:12
+#: src/singular-picker.js:76
+msgid "Page"
+msgstr "固定ページ"
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:94
+msgid "Add post or page"
+msgstr "投稿・固定ページを追加"
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:102
+msgid "Posts or pages could not be loaded. Check your permissions and REST API access."
+msgstr "投稿・固定ページを取得できませんでした。権限と REST API へのアクセスを確認してください。"
+
+#: build/conditional/index.js:2
+#: src/condition-editor.js:171
+#: src/singular-picker.js:110
+msgid "One or more saved targets are unavailable. Remove or reselect them; the public site will produce no output."
+msgstr "保存済みの対象を取得できません。削除または選び直してください。公開ページには何も出力しません。"
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:117
+msgid "Matches any selected published post or page. Other pages do not match. Missing or unpublished targets produce no output, even with NOT."
+msgstr "選択した公開済みの投稿・固定ページのいずれかに一致します。それ以外のページには一致しません。対象が削除・非公開になった場合は、NOT の有無にかかわらず、どちらの分岐も表示しません。"
+
+#: build/conditional/index.js:2
 #: src/conditions.js:4
 msgid "Not configured"
 msgstr "未設定"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:5
 msgid "Front page"
 msgstr "フロントページ"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:6
 msgid "Posts page"
 msgstr "ブログ投稿一覧"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:7
 msgid "Single post"
 msgstr "個別投稿"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:10
 msgid "Post belongs to category"
 msgstr "投稿が指定カテゴリーに属する"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:12
-msgid "Page"
-msgstr "固定ページ"
-
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:13
 msgid "Any singular page"
 msgstr "投稿・固定ページなどの個別ページ"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:16
+msgid "Specific posts or pages"
+msgstr "特定の投稿・固定ページ"
+
+#: build/conditional/index.js:2
+#: src/conditions.js:20
 msgid "Category archive"
 msgstr "カテゴリーアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:18
+#: build/conditional/index.js:2
+#: src/conditions.js:22
 msgid "Tag archive"
 msgstr "タグアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:21
+#: build/conditional/index.js:2
+#: src/conditions.js:25
 msgid "Custom taxonomy archive"
 msgstr "カスタムタクソノミーアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:25
+#: build/conditional/index.js:2
+#: src/conditions.js:29
 msgid "Post type archive"
 msgstr "投稿タイプアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:27
+#: build/conditional/index.js:2
+#: src/conditions.js:31
 msgid "Date archive"
 msgstr "日付アーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:28
+#: build/conditional/index.js:2
+#: src/conditions.js:32
 msgid "Author archive"
 msgstr "投稿者アーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:29
+#: build/conditional/index.js:2
+#: src/conditions.js:33
 msgid "Any archive"
 msgstr "すべてのアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:30
+#: build/conditional/index.js:2
+#: src/conditions.js:34
 msgid "Search results"
 msgstr "検索結果"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:31
+#: build/conditional/index.js:2
+#: src/conditions.js:35
 msgid "404 page"
 msgstr "404 ページ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:34
+#: build/conditional/index.js:2
+#: src/conditions.js:38
 msgid "Specific category archive"
 msgstr "特定のカテゴリーアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:36
+#: build/conditional/index.js:2
+#: src/conditions.js:40
 msgid "Specific tag archive"
 msgstr "特定のタグアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:39
+#: build/conditional/index.js:2
+#: src/conditions.js:43
 msgid "Specific custom taxonomy term archive"
 msgstr "特定のカスタムタクソノミー・タームアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/conditions.js:46
+#: build/conditional/index.js:2
+#: src/conditions.js:50
 msgid "Specific post type archive"
 msgstr "特定の投稿タイプアーカイブ"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:102
+#: build/conditional/index.js:2
+#: src/condition-editor.js:104
 msgid "Taxonomy"
 msgstr "タクソノミー"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:107
+#: build/conditional/index.js:2
+#: src/condition-editor.js:109
 msgid "Select taxonomy"
 msgstr "タクソノミーを選択"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:133
+#: build/conditional/index.js:2
+#: src/condition-editor.js:135
 msgid "Add category"
 msgstr "カテゴリーを追加"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:134
+#: build/conditional/index.js:2
+#: src/condition-editor.js:136
 msgid "Add archive target"
 msgstr "対象のアーカイブを追加"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:171
+#: build/conditional/index.js:2
+#: src/condition-editor.js:155
 msgid "Categories could not be loaded. Check your permissions and taxonomy REST support."
 msgstr "カテゴリーを取得できませんでした。権限とタクソノミーの REST 対応を確認してください。"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:175
+#: build/conditional/index.js:2
+#: src/condition-editor.js:159
 msgid "Archive targets could not be loaded. Check your permissions and taxonomy REST support."
 msgstr "候補を読み込めません。権限とタクソノミーの REST API 対応をご確認ください。"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:187
-msgid "One or more saved targets are unavailable. Remove or reselect them; the public site will produce no output."
-msgstr "保存済みの対象を取得できません。削除または選び直してください。公開ページには何も出力しません。"
-
-#: build/conditional/index.js:1
-#: src/condition-editor.js:196
+#: build/conditional/index.js:2
+#: src/condition-editor.js:180
 msgid "Matches any selected category assigned directly to the displayed post. NOT matches posts with none of them. Outside single post pages or with missing targets, neither branch is displayed."
 msgstr "表示中の投稿に直接付与されたカテゴリーのいずれかに一致します。NOT では、どれにも属さない投稿に一致します。通常投稿の詳細ページ以外や対象が存在しない場合は、どちらの分岐も表示しません。"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:200
+#: build/conditional/index.js:2
+#: src/condition-editor.js:184
 msgid "Matches the requested archive, not terms assigned to a post in a loop. Missing or private targets produce no output."
 msgstr "表示中のアーカイブを判定します。ループ内の投稿に属するタームの判定ではありません。削除済み・非公開の対象は何も出力しません。"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:225
+#: build/conditional/index.js:2
+#: src/condition-editor.js:209
 msgid "Match conditions"
 msgstr "条件の組み合わせ"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:230
+#: build/conditional/index.js:2
+#: src/condition-editor.js:214
 msgid "All (AND)"
 msgstr "すべて（AND）"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:234
+#: build/conditional/index.js:2
+#: src/condition-editor.js:218
 msgid "Any (OR)"
 msgstr "いずれか（OR）"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:245
+#: build/conditional/index.js:2
+#: src/condition-editor.js:229
 msgid "Page type"
 msgstr "表示しているページの種類"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:259
+#: build/conditional/index.js:2
+#: src/condition-editor.js:252
 msgid "Invert condition (NOT)"
 msgstr "条件を反転する（NOT）"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:278
+#: build/conditional/index.js:2
+#: src/condition-editor.js:271
 msgid "Remove condition"
 msgstr "条件を削除"
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:298
+#: build/conditional/index.js:2
+#: src/condition-editor.js:291
 msgid "Add condition"
 msgstr "条件を追加"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:93
 msgid "Remove ELSE and its content?"
 msgstr "ELSE とその内容を削除しますか？"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:100
 msgid "This deletes all content in ELSE. You can undo this change."
 msgstr "ELSE 内のコンテンツをすべて削除します。この操作は取り消せます。"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:109
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:126
 #: src/conditional/edit.js:208
 msgid "Remove ELSE"
 msgstr "ELSE を削除"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:133
 msgid "Display conditions"
 msgstr "表示条件"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:139
 msgid "Enable conditions"
 msgstr "条件を有効にする"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:145
 msgid "When disabled, IF is displayed. Invalid structure always produces no output."
 msgstr "無効にすると IF を表示します。構造が不正な場合は常に何も出力しません。"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:151
 msgid "Admin label"
 msgstr "管理用ラベル"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:163
 msgid "No ELSE branch. A false condition produces no output."
 msgstr "ELSE はありません。条件に一致しない場合は何も出力しません。"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:173
 msgid "Conditions are missing or invalid. Neither branch will appear on the public site."
 msgstr "条件が未設定または不正です。公開ページにはどちらの分岐も表示しません。"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:183
 msgid "Edit branch"
 msgstr "編集する分岐"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:202
 msgid "Both"
 msgstr "両方"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:213
 msgid "Add ELSE"
 msgstr "ELSE を追加"
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:221
 msgid "Invalid branch structure. Keep one IF followed by at most one ELSE. No public output will be produced."
 msgstr "分岐構造が不正です。IF を1つ、続いて ELSE を最大1つ配置してください。公開ページには何も出力しません。"

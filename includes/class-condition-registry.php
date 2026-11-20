@@ -20,6 +20,7 @@ final class Condition_Registry {
 			'request/post_category'        => 'is_object_in_term',
 			'request/page'                 => 'is_page',
 			'request/singular'             => 'is_singular',
+			'request/specific_singular'    => 'is_singular',
 			'request/category_archive'     => 'is_category',
 			'request/tag_archive'          => 'is_tag',
 			'request/taxonomy_archive'     => 'is_tax',

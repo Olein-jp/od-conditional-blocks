@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { conditionOptions, makeRule, validGroup } from '../../src/conditions';
 describe( '保存条件の UX 検証', () => {
-	test( '19 種の条件と未設定を表示する', () => {
-		expect( conditionOptions() ).toHaveLength( 20 );
+	test( '20 種の条件と未設定を表示する', () => {
+		expect( conditionOptions() ).toHaveLength( 21 );
 	} );
 	test( '未設定は公開不可', () => {
 		expect(
@@ -54,6 +54,32 @@ describe( '保存条件の UX 検証', () => {
 				} )
 			).toBe( false );
 		}
+	} );
+	test( '特定の投稿・固定ページは正整数 ID のみを受け付ける', () => {
+		const rule = makeRule( 'target', 'request/specific_singular' );
+		expect( rule.operator ).toBe( 'in' );
+		for ( const value of [
+			[],
+			[ '123' ],
+			[ 'contact' ],
+			[ 0 ],
+			[ -1 ],
+			[ 1.5 ],
+			true,
+		] ) {
+			expect(
+				validGroup( {
+					operator: 'AND',
+					conditions: [ { ...rule, value } ],
+				} )
+			).toBe( false );
+		}
+		expect(
+			validGroup( {
+				operator: 'OR',
+				conditions: [ { ...rule, value: [ 3, 4 ], negate: true } ],
+			} )
+		).toBe( true );
 	} );
 	test( '不正演算子、未知条件、空、重複 ID、上限超過を拒否', () => {
 		const rule = makeRule( 'one', 'request/search' );

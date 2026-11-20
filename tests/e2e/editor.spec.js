@@ -668,19 +668,28 @@ test( '日本語のブロック名・ツールバーと最小限の分岐ラベ�
 	}
 } );
 
-for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
-	test( `${ type }: カテゴリーを REST 候補から選択して保存・再読込する`, async ( {
+for ( const type of [
+	'request/category_term',
+	'request/post_category',
+	'request/tag_term',
+] ) {
+	test( `${ type }: 対象を REST 候補から選択して保存・再読込する`, async ( {
 		page,
 	} ) => {
 		await login( page );
 		await page.goto( '/wp-admin/post-new.php' );
 		await ready( page );
-		const category = await page.evaluate( async () =>
-			wp.apiFetch( {
-				path: '/wp/v2/categories',
-				method: 'POST',
-				data: { name: `OD picker ${ Date.now() }` },
-			} )
+		const category = await page.evaluate(
+			async ( conditionType ) =>
+				wp.apiFetch( {
+					path:
+						conditionType === 'request/tag_term'
+							? '/wp/v2/tags'
+							: '/wp/v2/categories',
+					method: 'POST',
+					data: { name: `OD picker ${ Date.now() }` },
+				} ),
+			type
 		);
 		try {
 			const id = await seed( page );
@@ -709,7 +718,7 @@ for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
 				await picker.fill( category.name );
 				await expect(
 					page.getByRole( 'option', {
-						name: category.name,
+						name: `${ category.name } (${ category.id })`,
 						exact: true,
 					} )
 				).toBeVisible( { timeout: 2000 } );
@@ -744,6 +753,11 @@ for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
 					await invert.press( 'Space' );
 				}
 				await expect( invert ).toBeChecked();
+				await expect(
+					page.locator(
+						'.od-rule .components-form-token-field__token'
+					)
+				).toContainText( category.name );
 			} ).toPass( { timeout: 30000 } );
 			const savedId = await page.evaluate( async () => {
 				wp.data
@@ -781,13 +795,144 @@ for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
 			);
 		} finally {
 			await page.evaluate(
-				async ( categoryId ) =>
+				async ( { categoryId, conditionType } ) =>
 					wp.apiFetch( {
-						path: `/wp/v2/categories/${ categoryId }?force=true`,
+						path: `/wp/v2/${ conditionType === 'request/tag_term' ? 'tags' : 'categories' }/${ categoryId }?force=true`,
 						method: 'DELETE',
 					} ),
-				category.id
+				{ categoryId: category.id, conditionType: type }
 			);
 		}
 	} );
 }
+
+test( '特定の投稿・固定ページをトークンで複数選択・削除・保存する', async ( {
+	page,
+} ) => {
+	await login( page );
+	await page.goto( '/wp-admin/post-new.php' );
+	await ready( page );
+	const fixtures = await page.evaluate( async () => {
+		const title = `OD target & example ${ Date.now() }`;
+		const targets = [];
+		for ( const type of [ 'posts', 'pages' ] ) {
+			targets.push(
+				await wp.apiFetch( {
+					path: `/wp/v2/${ type }`,
+					method: 'POST',
+					data: { title, status: 'publish' },
+				} )
+			);
+		}
+		return { title, targets };
+	} );
+	let savedId;
+	try {
+		const id = await seed( page );
+		const getValues = () =>
+			page.evaluate(
+				( clientId ) =>
+					wp.data
+						.select( 'core/block-editor' )
+						.getBlockAttributes( clientId ).conditionGroup
+						.conditions[ 0 ].value,
+				id
+			);
+		await expect( async () => {
+			await selectParent( page, id );
+			const type = page.getByRole( 'combobox', {
+				name: 'Page type',
+				exact: true,
+			} );
+			if ( ! ( await type.isVisible() ) ) {
+				await page
+					.getByRole( 'button', { name: 'Settings', exact: true } )
+					.click();
+			}
+			await type.selectOption( 'request/specific_singular' );
+			const picker = page.getByRole( 'combobox', {
+				name: 'Add post or page',
+				exact: true,
+			} );
+			for ( const [ index, target ] of fixtures.targets.entries() ) {
+				await picker.fill( fixtures.title );
+				const label = `${ fixtures.title } — ${ index === 0 ? 'Post' : 'Page' } (${ target.id })`;
+				await expect(
+					page.getByRole( 'option', { name: label, exact: true } )
+				).toBeVisible();
+				await page
+					.getByRole( 'option', { name: label, exact: true } )
+					.click();
+			}
+			expect( await getValues() ).toEqual(
+				fixtures.targets.map( ( target ) => target.id )
+			);
+		} ).toPass( { timeout: 30000 } );
+		const tokens = page.locator(
+			'.od-rule .components-form-token-field__token'
+		);
+		await expect( tokens ).toHaveCount( 2 );
+		await expect( tokens.first() ).toContainText( fixtures.title );
+		await page
+			.locator( '.od-rule' )
+			.screenshot( { path: 'artifacts/specific-target-picker.png' } );
+		const picker = page.getByRole( 'combobox', {
+			name: 'Add post or page',
+			exact: true,
+		} );
+		await picker.fill( 'OD nonexistent target' );
+		await picker.press( 'Enter' );
+		expect( await getValues() ).toEqual(
+			fixtures.targets.map( ( target ) => target.id )
+		);
+		await picker.fill( '' );
+		await tokens.first().getByRole( 'button' ).click();
+		await expect.poll( getValues ).toEqual( [ fixtures.targets[ 1 ].id ] );
+		savedId = await page.evaluate( async () => {
+			wp.data
+				.dispatch( 'core/editor' )
+				.editPost( { title: 'OD selected target E2E' } );
+			await wp.data.dispatch( 'core/editor' ).savePost();
+			return wp.data.select( 'core/editor' ).getCurrentPostId();
+		} );
+		await page.reload();
+		await ready( page );
+		const block = await page.evaluate( () =>
+			wp.data
+				.select( 'core/block-editor' )
+				.getBlocks()
+				.find( ( item ) => item.name === 'od-conditional/conditional' )
+		);
+		expect( block.isValid ).toBe( true );
+		expect( block.attributes.conditionGroup.conditions[ 0 ] ).toMatchObject(
+			{
+				type: 'request/specific_singular',
+				operator: 'in',
+				value: [ fixtures.targets[ 1 ].id ],
+			}
+		);
+		await selectParent( page, block.clientId );
+		if ( ! ( await picker.isVisible() ) )
+			await page
+				.getByRole( 'button', { name: 'Settings', exact: true } )
+				.click();
+		await expect( tokens ).toContainText( fixtures.title );
+	} finally {
+		await page.evaluate(
+			async ( { targets, draftId } ) => {
+				if ( draftId )
+					await wp.apiFetch( {
+						path: `/wp/v2/posts/${ draftId }?force=true`,
+						method: 'DELETE',
+					} );
+				for ( const [ index, target ] of targets.entries() ) {
+					await wp.apiFetch( {
+						path: `/wp/v2/${ index === 0 ? 'posts' : 'pages' }/${ target.id }?force=true`,
+						method: 'DELETE',
+					} );
+				}
+			},
+			{ targets: fixtures.targets, draftId: savedId }
+		);
+	}
+} );

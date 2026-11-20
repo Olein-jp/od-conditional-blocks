@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OD Conditional Blocks 0.1.3\n"
+"Project-Id-Version: OD Conditional Blocks 0.1.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-conditional-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-20T03:59:41+00:00\n"
+"POT-Creation-Date: 2026-11-20T05:06:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-conditional-blocks\n"
@@ -44,252 +44,296 @@ msgid "OD Conditional Blocks: Dependencies are missing. Install the ZIP from Git
 msgstr ""
 
 #: build/conditional/index.js:1
+#: src/target-token-field.js:52
+msgid "Choose existing targets from the suggestions. Remove a token to deselect it."
+msgstr ""
+
+#. translators: 1: post title, 2: post type label, 3: post ID.
+#: build/conditional/index.js:2
+#: src/singular-picker.js:71
+#, js-format
+msgid "%1$s — %2$s (%3$d)"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:73
+msgid "(Untitled)"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:75
+msgid "Post"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/conditions.js:12
+#: src/singular-picker.js:76
+msgid "Page"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:94
+msgid "Add post or page"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:102
+msgid "Posts or pages could not be loaded. Check your permissions and REST API access."
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/condition-editor.js:171
+#: src/singular-picker.js:110
+msgid "One or more saved targets are unavailable. Remove or reselect them; the public site will produce no output."
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/singular-picker.js:117
+msgid "Matches any selected published post or page. Other pages do not match. Missing or unpublished targets produce no output, even with NOT."
+msgstr ""
+
+#: build/conditional/index.js:2
 #: src/conditions.js:4
 msgid "Not configured"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:5
 msgid "Front page"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:6
 msgid "Posts page"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:7
 msgid "Single post"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:10
 msgid "Post belongs to category"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:12
-msgid "Page"
-msgstr ""
-
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:13
 msgid "Any singular page"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditions.js:16
+msgid "Specific posts or pages"
+msgstr ""
+
+#: build/conditional/index.js:2
+#: src/conditions.js:20
 msgid "Category archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:18
+#: build/conditional/index.js:2
+#: src/conditions.js:22
 msgid "Tag archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:21
+#: build/conditional/index.js:2
+#: src/conditions.js:25
 msgid "Custom taxonomy archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:25
+#: build/conditional/index.js:2
+#: src/conditions.js:29
 msgid "Post type archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:27
+#: build/conditional/index.js:2
+#: src/conditions.js:31
 msgid "Date archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:28
+#: build/conditional/index.js:2
+#: src/conditions.js:32
 msgid "Author archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:29
+#: build/conditional/index.js:2
+#: src/conditions.js:33
 msgid "Any archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:30
+#: build/conditional/index.js:2
+#: src/conditions.js:34
 msgid "Search results"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:31
+#: build/conditional/index.js:2
+#: src/conditions.js:35
 msgid "404 page"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:34
+#: build/conditional/index.js:2
+#: src/conditions.js:38
 msgid "Specific category archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:36
+#: build/conditional/index.js:2
+#: src/conditions.js:40
 msgid "Specific tag archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:39
+#: build/conditional/index.js:2
+#: src/conditions.js:43
 msgid "Specific custom taxonomy term archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/conditions.js:46
+#: build/conditional/index.js:2
+#: src/conditions.js:50
 msgid "Specific post type archive"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:102
+#: build/conditional/index.js:2
+#: src/condition-editor.js:104
 msgid "Taxonomy"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:107
+#: build/conditional/index.js:2
+#: src/condition-editor.js:109
 msgid "Select taxonomy"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:133
+#: build/conditional/index.js:2
+#: src/condition-editor.js:135
 msgid "Add category"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:134
+#: build/conditional/index.js:2
+#: src/condition-editor.js:136
 msgid "Add archive target"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:171
+#: build/conditional/index.js:2
+#: src/condition-editor.js:155
 msgid "Categories could not be loaded. Check your permissions and taxonomy REST support."
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:175
+#: build/conditional/index.js:2
+#: src/condition-editor.js:159
 msgid "Archive targets could not be loaded. Check your permissions and taxonomy REST support."
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:187
-msgid "One or more saved targets are unavailable. Remove or reselect them; the public site will produce no output."
-msgstr ""
-
-#: build/conditional/index.js:1
-#: src/condition-editor.js:196
+#: build/conditional/index.js:2
+#: src/condition-editor.js:180
 msgid "Matches any selected category assigned directly to the displayed post. NOT matches posts with none of them. Outside single post pages or with missing targets, neither branch is displayed."
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:200
+#: build/conditional/index.js:2
+#: src/condition-editor.js:184
 msgid "Matches the requested archive, not terms assigned to a post in a loop. Missing or private targets produce no output."
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:225
+#: build/conditional/index.js:2
+#: src/condition-editor.js:209
 msgid "Match conditions"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:230
+#: build/conditional/index.js:2
+#: src/condition-editor.js:214
 msgid "All (AND)"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:234
+#: build/conditional/index.js:2
+#: src/condition-editor.js:218
 msgid "Any (OR)"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:245
+#: build/conditional/index.js:2
+#: src/condition-editor.js:229
 msgid "Page type"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:259
+#: build/conditional/index.js:2
+#: src/condition-editor.js:252
 msgid "Invert condition (NOT)"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:278
+#: build/conditional/index.js:2
+#: src/condition-editor.js:271
 msgid "Remove condition"
 msgstr ""
 
-#: build/conditional/index.js:1
-#: src/condition-editor.js:298
+#: build/conditional/index.js:2
+#: src/condition-editor.js:291
 msgid "Add condition"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:93
 msgid "Remove ELSE and its content?"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:100
 msgid "This deletes all content in ELSE. You can undo this change."
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:109
 msgid "Cancel"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:126
 #: src/conditional/edit.js:208
 msgid "Remove ELSE"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:133
 msgid "Display conditions"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:139
 msgid "Enable conditions"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:145
 msgid "When disabled, IF is displayed. Invalid structure always produces no output."
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:151
 msgid "Admin label"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:163
 msgid "No ELSE branch. A false condition produces no output."
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:173
 msgid "Conditions are missing or invalid. Neither branch will appear on the public site."
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:183
 msgid "Edit branch"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:202
 msgid "Both"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:213
 msgid "Add ELSE"
 msgstr ""
 
-#: build/conditional/index.js:1
+#: build/conditional/index.js:2
 #: src/conditional/edit.js:221
 msgid "Invalid branch structure. Keep one IF followed by at most one ELSE. No public output will be produced."
 msgstr ""

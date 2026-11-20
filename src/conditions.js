@@ -12,6 +12,10 @@ export const conditionOptions = () =>
 		[ 'page', __( 'Page', 'od-conditional-blocks' ) ],
 		[ 'singular', __( 'Any singular page', 'od-conditional-blocks' ) ],
 		[
+			'specific_singular',
+			__( 'Specific posts or pages', 'od-conditional-blocks' ),
+		],
+		[
 			'category_archive',
 			__( 'Category archive', 'od-conditional-blocks' ),
 		],
@@ -50,7 +54,8 @@ export const conditionOptions = () =>
 		label,
 	} ) );
 export const needsValue = ( type ) =>
-	type === 'request/post_category' || /(?:_term|_archive_of)$/.test( type );
+	[ 'request/post_category', 'request/specific_singular' ].includes( type ) ||
+	/(?:_term|_archive_of)$/.test( type );
 export function makeRule( id, type = '' ) {
 	let value = true;
 	if ( needsValue( type ) ) {
@@ -100,6 +105,11 @@ export function validRule( rule ) {
 	}
 	if ( rule.operator !== 'in' ) {
 		return false;
+	}
+	if ( rule.type === 'request/specific_singular' ) {
+		return (
+			validValues( rule.value ) && rule.value.every( Number.isInteger )
+		);
 	}
 	if ( rule.type === 'request/taxonomy_term' ) {
 		return (

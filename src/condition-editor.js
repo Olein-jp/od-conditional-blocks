@@ -6,10 +6,12 @@ import {
 	Button,
 	SelectControl,
 	ToggleControl,
-	ComboboxControl,
 	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import TargetTokenField from './target-token-field';
+import SingularPicker from './singular-picker';
+import { decodeEntities } from '@wordpress/html-entities';
 import { conditionOptions, makeRule, needsValue } from './conditions';
 
 function ValuePicker( { rule, update } ) {
@@ -127,44 +129,26 @@ function ValuePicker( { rule, update } ) {
 					}
 				/>
 			) }
-			<ComboboxControl
+			<TargetTokenField
 				label={
 					postCategory
 						? __( 'Add category', 'od-conditional-blocks' )
 						: __( 'Add archive target', 'od-conditional-blocks' )
 				}
-				value={ null }
-				options={ items.filter(
-					( item ) => ! values.map( String ).includes( item.value )
-				) }
-				onFilterValueChange={ setSearch }
-				onChange={ ( value ) => {
-					if ( value ) {
-						setValues( [
-							...values,
-							postType ? value : Number( value ),
-						] );
-					}
-				} }
+				values={ values }
+				items={ [
+					...items,
+					...( selected || [] ).map( ( term ) => ( {
+						value: String( term.id ),
+						label: term.name,
+					} ) ),
+				].map( ( item ) => ( {
+					value: postType ? item.value : Number( item.value ),
+					label: `${ decodeEntities( item.label ) } (${ item.value })`,
+				} ) ) }
+				onSearch={ setSearch }
+				onChange={ setValues }
 			/>
-			{ values.map( ( value ) => (
-				<div key={ value }>
-					<Button
-						variant="tertiary"
-						isDestructive
-						onClick={ () =>
-							setValues( values.filter( ( v ) => v !== value ) )
-						}
-					>
-						{ ( selected || [] ).find( ( t ) => t.id === value )
-							?.name ||
-							items.find( ( i ) => i.value === String( value ) )
-								?.label ||
-							String( value ) }{ ' ' }
-						×
-					</Button>
-				</div>
-			) ) }
 			{ error && (
 				<Notice status="warning" isDismissible={ false }>
 					{ postCategory
@@ -249,11 +233,20 @@ export default function ConditionEditor( { group, onChange } ) {
 							update( index, makeRule( rule.id, type ) )
 						}
 					/>
-					{ needsValue( rule.type ) && (
-						<ValuePicker
+					{ rule.type === 'request/specific_singular' ? (
+						<SingularPicker
+							key={ rule.type }
 							rule={ rule }
 							update={ ( patch ) => update( index, patch ) }
 						/>
+					) : (
+						needsValue( rule.type ) && (
+							<ValuePicker
+								key={ rule.type }
+								rule={ rule }
+								update={ ( patch ) => update( index, patch ) }
+							/>
+						)
 					) }
 					<ToggleControl
 						label={ __(

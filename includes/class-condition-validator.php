@@ -64,6 +64,18 @@ final class Condition_Validator {
 			return false;
 		}
 		$type = $rule['type'];
+		if ( 'request/specific_singular' === $type ) {
+			if ( 'in' !== ( $rule['operator'] ?? null ) || ! self::values( $rule['value'] ?? null ) ) {
+				return false;
+			}
+			foreach ( $rule['value'] as $id ) {
+				$post = is_int( $id ) ? get_post( $id ) : null;
+				if ( ! $post || ! in_array( $post->post_type, array( 'post', 'page' ), true ) || 'publish' !== $post->post_status ) {
+					return false;
+				}
+			}
+			return true;
+		}
 		if ( 'request/post_type_archive_of' === $type ) {
 			if ( 'in' !== ( $rule['operator'] ?? null ) || ! self::values( $rule['value'] ?? null ) ) {
 				return false;

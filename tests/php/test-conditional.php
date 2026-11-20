@@ -150,6 +150,67 @@ class OD_Conditional_Test extends WP_UnitTestCase {
    }
   }
  }
+ public function test_specific_posts_and_pages_match_only_selected_ids() {
+  $post = self::factory()->post->create();
+  $page = self::factory()->post->create( array( 'post_type' => 'page' ) );
+  $other = self::factory()->post->create();
+  $rule = $this->rule( 'request/specific_singular' ); $rule['operator'] = 'in'; $rule['value'] = array( $post, $page );
+  foreach ( array( $post, $page ) as $id ) {
+   $this->go_to( get_permalink( $id ) );
+   $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $this->assertSame( 'if', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+   $rule['negate'] = true;
+   $this->assertFalse( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $rule['negate'] = false;
+  }
+  foreach ( array( get_permalink( $other ), get_category_link( $this->category ), '/?s=targets', '/?p=999999999' ) as $url ) {
+   $this->go_to( $url );
+   $this->assertFalse( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $this->assertSame( 'else', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+   $rule['negate'] = true;
+   $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $rule['negate'] = false;
+  }
+  update_option( 'show_on_front', 'page' ); update_option( 'page_on_front', $page );
+  $this->go_to( '/' );
+  $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+ }
+ public function test_specific_targets_reject_invalid_and_unpublished_ids_even_with_not_or() {
+  $post = self::factory()->post->create();
+  $draft = self::factory()->post->create( array( 'post_status' => 'draft' ) );
+  $private = self::factory()->post->create( array( 'post_status' => 'private' ) );
+  $attachment = self::factory()->post->create( array( 'post_type' => 'attachment' ) );
+  register_post_type( 'od_book', array( 'public' => true ) );
+  $book = self::factory()->post->create( array( 'post_type' => 'od_book' ) );
+  $this->go_to( get_permalink( $post ) );
+  $rule = $this->rule( 'request/specific_singular', true ); $rule['operator'] = 'in';
+  foreach ( array( array(), array( (string) $post ), array( 'contact' ), array( 0 ), array( $draft ), array( $private ), array( $attachment ), array( $book ), array( $post, 999999999 ) ) as $values ) {
+   $rule['value'] = $values;
+   $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+   $this->assertNull( Engine::evaluate( $this->attrs( array( $this->rule( 'request/singular' ), $rule ), 'OR' ) ) );
+   $this->assertSame( '', do_blocks( $this->markup( $this->attrs( array( $rule ) ) ) ) );
+  }
+  unregister_post_type( 'od_book' );
+  $rule['value'] = array( $post ); $rule['operator'] = 'is';
+  $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  $rule['operator'] = 'in'; wp_trash_post( $post );
+  $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+ }
+ public function test_specific_targets_use_main_query_after_title_change() {
+  global $wp_query, $post;
+  $page = self::factory()->post->create( array( 'post_type' => 'page', 'post_title' => 'Contact' ) );
+  $this->go_to( get_permalink( $page ) );
+  $rule = $this->rule( 'request/specific_singular' ); $rule['operator'] = 'in'; $rule['value'] = array( $page );
+  wp_update_post( array( 'ID' => $page, 'post_title' => 'New Contact', 'post_name' => 'new-contact' ) );
+  $main = $wp_query; $main_post = $post;
+  try {
+   $other = self::factory()->post->create();
+   $wp_query = new WP_Query( array( 'p' => $other ) ); $post = get_post( $other );
+   $this->assertTrue( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+  } finally { $wp_query = $main; $post = $main_post; }
+  wp_delete_post( $page, true );
+  $this->assertNull( Engine::evaluate( $this->attrs( array( $rule ) ) ) );
+ }
  public function test_custom_taxonomy_and_post_type() {
   register_taxonomy( 'od_genre', 'post', array( 'public' => true ) );
   $term = self::factory()->term->create( array( 'taxonomy' => 'od_genre' ) );
@@ -181,7 +242,7 @@ class OD_Conditional_Test extends WP_UnitTestCase {
  }
  public function test_every_registered_api_can_be_evaluated() {
   foreach ( Registry::all() as $type => $method ) {
-   if ( in_array( $type, array( 'request/post_category', 'request/category_term', 'request/tag_term', 'request/taxonomy_term', 'request/post_type_archive_of' ), true ) ) { continue; }
+   if ( in_array( $type, array( 'request/specific_singular', 'request/post_category', 'request/category_term', 'request/tag_term', 'request/taxonomy_term', 'request/post_type_archive_of' ), true ) ) { continue; }
    $this->assertIsBool( Engine::evaluate( $this->attrs( array( $this->rule( $type ) ) ) ) );
   }
  }

@@ -14,6 +14,7 @@
 
 | 条件 ID（request/ 以下） | value |
 | --- | --- |
+| specific_singular | 公開済みの通常投稿・固定ページの ID（正整数）の配列 |
 | post_category | 表示中の通常投稿に直接付与されたカテゴリー ID またはスラッグの配列 |
 | category_term | カテゴリー ID（正整数）またはスラッグの配列 |
 | tag_term | タグ ID またはスラッグの配列 |
@@ -27,3 +28,5 @@ enabled=false はスキーマ版・enabled の型・正常な分岐構造を確�
 将来の公開条件登録 API は未公開。レジストリを内部実装として保ち、保存 ID の拡張・移行は将来明示する。
 
 `request/post_category` はメインリクエストの通常投稿詳細で、指定カテゴリーのいずれかへの直接所属を評価する。`negate: true` はいずれにも属していない場合に一致。通常投稿詳細以外・対象投稿が取得できない場合・ターム照会エラーは判定不能（null）とし、NOT や OR でも表示せず条件分岐全体を閉じる。既存の category_term は引き続きアーカイブ専用。
+
+`request/specific_singular` はメインリクエストが通常投稿または固定ページの個別ページであり、照会対象 ID が value に含まれるとき true。それ以外のリクエストは false、NOT では true。ID のみを受け付け、すべての対象が publish 状態の post/page として存在することを検証する。削除・非公開・別投稿タイプ・不正値は null とし条件分岐全体を閉じる。選択 UI は FormTokenField を用いるが、保存する値やスキーマ版は変わらない。

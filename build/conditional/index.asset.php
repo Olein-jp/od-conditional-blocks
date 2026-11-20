@@ -7,7 +7,8 @@
 		'wp-core-data',
 		'wp-data',
 		'wp-element',
+		'wp-html-entities',
 		'wp-i18n'
 	),
-	'version' => 'afa483b2d5c85ff789e6'
+	'version' => 'cae31f1695542c92c940'
 );
