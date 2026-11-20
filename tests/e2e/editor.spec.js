@@ -729,12 +729,25 @@ for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
 					id
 				)
 			).toEqual( [ category.id ] );
-			await page
-				.getByRole( 'checkbox', {
-					name: 'Invert condition (NOT)',
-					exact: true,
-				} )
-				.check();
+			const invert = page.getByRole( 'checkbox', {
+				name: 'Invert condition (NOT)',
+				exact: true,
+			} );
+			await expect( async () => {
+				if ( ! ( await invert.isVisible() ) ) {
+					await page
+						.getByRole( 'button', {
+							name: 'Settings',
+							exact: true,
+						} )
+						.click();
+				}
+				await invert.focus();
+				if ( ! ( await invert.isChecked() ) ) {
+					await invert.press( 'Space' );
+				}
+				await expect( invert ).toBeChecked();
+			} ).toPass( { timeout: 30000 } );
 			const savedId = await page.evaluate( async () => {
 				wp.data
 					.dispatch( 'core/editor' )
