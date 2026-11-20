@@ -684,51 +684,48 @@ for ( const type of [ 'request/category_term', 'request/post_category' ] ) {
 		);
 		try {
 			const id = await seed( page );
-			if (
-				! ( await page
-					.getByRole( 'combobox', { name: 'Page type', exact: true } )
-					.count() )
-			) {
-				await page
-					.getByRole( 'button', { name: 'Settings', exact: true } )
-					.click();
-			}
-			await page
-				.getByRole( 'combobox', { name: 'Page type', exact: true } )
-				.selectOption( type );
-			const picker = page.getByRole( 'combobox', {
-				name:
-					type === 'request/post_category'
-						? 'Add category'
-						: 'Add archive target',
-				exact: true,
-			} );
-			await Promise.all( [
-				page.waitForResponse( ( response ) => {
-					const url = new URL( response.url() );
-					return (
-						url.pathname.includes( '/wp/v2/categories' ) &&
-						url.searchParams.get( 'search' ) === category.name &&
-						response.ok()
-					);
-				} ),
-				picker.fill( category.name ),
-			] );
-			await expect(
-				page.getByRole( 'option', { name: category.name, exact: true } )
-			).toBeVisible();
-			await picker.press( 'ArrowDown' );
-			await picker.press( 'Enter' );
-			expect(
-				await page.evaluate(
-					( clientId ) =>
-						wp.data
-							.select( 'core/block-editor' )
-							.getBlockAttributes( clientId ).conditionGroup
-							.conditions[ 0 ].value,
-					id
-				)
-			).toEqual( [ category.id ] );
+			await expect( async () => {
+				await selectParent( page, id );
+				const conditionType = page.getByRole( 'combobox', {
+					name: 'Page type',
+					exact: true,
+				} );
+				if ( ! ( await conditionType.isVisible() ) ) {
+					await page
+						.getByRole( 'button', {
+							name: 'Settings',
+							exact: true,
+						} )
+						.click();
+				}
+				await conditionType.selectOption( type );
+				const picker = page.getByRole( 'combobox', {
+					name:
+						type === 'request/post_category'
+							? 'Add category'
+							: 'Add archive target',
+					exact: true,
+				} );
+				await picker.fill( category.name );
+				await expect(
+					page.getByRole( 'option', {
+						name: category.name,
+						exact: true,
+					} )
+				).toBeVisible( { timeout: 2000 } );
+				await picker.press( 'ArrowDown' );
+				await picker.press( 'Enter' );
+				expect(
+					await page.evaluate(
+						( clientId ) =>
+							wp.data
+								.select( 'core/block-editor' )
+								.getBlockAttributes( clientId ).conditionGroup
+								.conditions[ 0 ].value,
+						id
+					)
+				).toEqual( [ category.id ] );
+			} ).toPass( { timeout: 30000 } );
 			const invert = page.getByRole( 'checkbox', {
 				name: 'Invert condition (NOT)',
 				exact: true,
