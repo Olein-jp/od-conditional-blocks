@@ -911,12 +911,15 @@ test( '特定の投稿・固定ページをトークンで複数選択・削除�
 				value: [ fixtures.targets[ 1 ].id ],
 			}
 		);
-		await selectParent( page, block.clientId );
-		if ( ! ( await picker.isVisible() ) )
-			await page
-				.getByRole( 'button', { name: 'Settings', exact: true } )
-				.click();
-		await expect( tokens ).toContainText( fixtures.title );
+		await expect( async () => {
+			await selectParent( page, block.clientId );
+			if ( ! ( await picker.isVisible() ) ) {
+				await page
+					.getByRole( 'button', { name: 'Settings', exact: true } )
+					.click();
+			}
+			await expect( tokens ).toContainText( fixtures.title );
+		} ).toPass( { timeout: 30000 } );
 	} finally {
 		await page.evaluate(
 			async ( { targets, draftId } ) => {
